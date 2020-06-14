@@ -1,9 +1,11 @@
 package com.example.controller;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,18 +15,19 @@ import java.util.Date;
 
 public class GetImages {
     public static void main(String[] args) throws Exception {
-        GetImages getImages =new GetImages();
-        for (int i=1;i<22674;i++){
-            getImages.getImg("http://www.netbian.com/desk/"+i+".htm");
+        GetImages getImages = new GetImages();
+        for (int i = 1; i < 22674; i++) {
+            getImages.getImg("http://www.netbian.com/desk/" + i + ".htm");
         }
     }
-    public  void getImg(String url) throws Exception {
+
+    public void getImg(String url) throws Exception {
         Connection connect = Jsoup.connect(url);
         Document document = connect.get();
         Elements links = document.getElementsByClass("pic");//获取第2个符合要求的标签
         //获取第一步非高清图页面
         String imgUrl = "http://www.netbian.com" + getSubString(links.toString(), "<p><a href=\"", "\"");
-        String size=getSubString(imgUrl,"-",".htm");
+        String size = getSubString(imgUrl, "-", ".htm");
         //获取高清图地址
         connect = Jsoup.connect(imgUrl);
         Document imgDocument = connect.get();
@@ -32,10 +35,11 @@ public class GetImages {
         String finalUrl = getSubString(imgElement.toString(), "<a href=\"", "\"");
         String endWith = finalUrl.substring(finalUrl.lastIndexOf("."));
         String fileName = "\\" + new Date().getTime() + (int) Math.random() + "";
-        download(finalUrl, endWith, fileName,size);
-        System.out.println("图片地址："+finalUrl);
+        download(finalUrl, endWith, fileName);
+        System.out.println("图片地址：" + finalUrl);
     }
-    public  String getSubString(String text, String left, String right) {
+
+    public String getSubString(String text, String left, String right) {
         String result = "";
         int zLen;
         if (left == null || left.isEmpty()) {
@@ -55,7 +59,8 @@ public class GetImages {
         result = text.substring(zLen, yLen);
         return result;
     }
-    public  void download(String url, String endWith, String fileName,String size) throws Exception {
+
+    public void download(String url, String endWith, String fileName) throws Exception {
 
         File file = new File("d:/img1/");//地址改成自己本地的文件目录
         System.out.println(file.getPath() + fileName + endWith);
@@ -70,8 +75,8 @@ public class GetImages {
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file.getPath() + fileName + endWith));
         byte[] bs = new byte[2048];
         int len;
-        while ((len=is.read(bs)) != -1) {
-            bos.write(bs,0,len);
+        while ((len = is.read(bs)) != -1) {
+            bos.write(bs, 0, len);
         }
         bos.flush();
         if (is != null) is.close();
