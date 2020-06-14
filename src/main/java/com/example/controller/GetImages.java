@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import com.example.Image.Image;
+import com.example.service.ImageService;
+import com.example.service.Impl.ImageServiceImpl;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,7 +19,7 @@ import java.util.Date;
 public class GetImages {
     public static void main(String[] args) throws Exception {
         GetImages getImages = new GetImages();
-        for (int i = 1; i < 22674; i++) {
+        for (int i = 22701; i>0; i--) {
             getImages.getImg("http://www.netbian.com/desk/" + i + ".htm");
         }
     }
@@ -24,7 +27,7 @@ public class GetImages {
     public void getImg(String url) throws Exception {
         Connection connect = Jsoup.connect(url);
         Document document = connect.get();
-        Elements links = document.getElementsByClass("pic");//获取第2个符合要求的标签
+        Elements links = document.getElementsByClass("pic");
         //获取第一步非高清图页面
         String imgUrl = "http://www.netbian.com" + getSubString(links.toString(), "<p><a href=\"", "\"");
         String size = getSubString(imgUrl, "-", ".htm");
@@ -32,9 +35,14 @@ public class GetImages {
         connect = Jsoup.connect(imgUrl);
         Document imgDocument = connect.get();
         Element imgElement = imgDocument.getElementById("endimg");
-        String finalUrl = getSubString(imgElement.toString(), "<a href=\"", "\"");
+        Elements img = imgElement.getElementsByTag("img").eq(0);
+        String finalUrl = img.attr("src");//getSubString(imgElement.toString(), "<a href=\"", "\"");
         String endWith = finalUrl.substring(finalUrl.lastIndexOf("."));
         String fileName = "\\" + new Date().getTime() + (int) Math.random() + "";
+        Image image=new Image();
+        image.setSize(size);
+        image.setUrl(finalUrl);
+        svae2Mysql(image);
         download(finalUrl, endWith, fileName);
         System.out.println("图片地址：" + finalUrl);
     }
@@ -62,7 +70,7 @@ public class GetImages {
 
     public void download(String url, String endWith, String fileName) throws Exception {
 
-        File file = new File("d:/img1/");//地址改成自己本地的文件目录
+        File file = new File("d:/img2/");//地址改成自己本地的文件目录
         System.out.println(file.getPath() + fileName + endWith);
         if (!file.exists()) {
             file.mkdir();
@@ -83,4 +91,8 @@ public class GetImages {
         if (bos != null) bos.close();
     }
 
+    public void svae2Mysql(Image image){
+        ImageService imageService=new ImageServiceImpl();
+        imageService.save(image);
+    }
 }

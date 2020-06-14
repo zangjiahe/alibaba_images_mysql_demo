@@ -9,7 +9,7 @@ public class DBCon {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(
-                    "jdbc:mysql://你云数据库的外网地址/数据库名?useUnicode=true&characterEncoding=UTF-8&useSSL=false",
+                    "jdbc:mysql://云数据库外网地址/数据库名?useUnicode=true&characterEncoding=UTF-8&useSSL=false",
                     "数据库用户名", "数据库密码");
         } catch (SQLException e) {
             e.printStackTrace();
